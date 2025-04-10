@@ -185,6 +185,7 @@ onMounted(() => {
           :key="movie.id"
           :movie="movie"
           :size="store.cardSize"
+          @click="() => $router.push(`/filme/${movie.id}`)"
         />
       </div>
 
