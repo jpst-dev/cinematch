@@ -1,17 +1,24 @@
 <template>
-  <div class="min-h-screen bg-zinc-900 text-white px-4 sm:px-6 lg:px-8 py-6">
+  <div class="min-h-screen px-4 py-6 text-white bg-zinc-900 sm:px-6 lg:px-8">
     <section
       v-if="nowPlayingMovies.length"
-      class="mb-10 flex flex-col items-center bg-zinc-800 rounded-lg p-4 shadow-lg"
+      class="flex flex-col items-center p-4 mb-10 rounded-lg shadow-lg bg-zinc-800"
       :class="store.cardSize === 'sm' ? 'max-w-7xl mx-auto' : ''"
     >
-      <h2 class="text-2xl font-bold mb-4 text-center text-gray-200">
+      <h2 class="mb-4 text-2xl font-bold text-center text-gray-200">
         <span class="animate-pulse">🎬</span> Em Cartaz
       </h2>
       <Carousel
-        :items-to-show="
-          store.cardSize === 'lg' ? 5 : store.cardSize === 'md' ? 6 : 7
-        "
+        :items-to-show="responsiveItemsToShow"
+        :items-to-scroll="responsiveItemsToShow"
+        :breakpoints="{
+          0: { itemsToShow: 1, itemsToScroll: 1 },
+          380: { itemsToShow: 2, itemsToScroll: 2 },
+          768: { itemsToShow: 3, itemsToScroll: 3 },
+          1024: { itemsToShow: 4, itemsToScroll: 4 },
+          1280: { itemsToShow: 5, itemsToScroll: 5 },
+        }"
+        :loop="true"
         :wrap-around="true"
         :mouse-drag="true"
         :pause-autoplay-on-hover="true"
@@ -38,20 +45,20 @@
           />
         </Slide>
         <template #addons>
-          <Pagination />
+          <Navigation />
         </template>
       </Carousel>
     </section>
-    <div class="max-w-7xl mx-auto">
+    <div class="mx-auto max-w-7xl">
       <div
         v-if="loading && currentPage === 1"
-        class="text-center py-10 text-gray-400"
+        class="py-10 text-center text-gray-400"
       >
         Carregando filmes...
       </div>
       <div
         v-else-if="Array.isArray(filteredMovies) && filteredMovies.length === 0"
-        class="text-center py-10 text-gray-400"
+        class="py-10 text-center text-gray-400"
       >
         Nenhum filme encontrado.
       </div>
@@ -61,13 +68,13 @@
         class="grid"
         :class="[
           store.cardSize === 'sm'
-            ? 'grid-cols-[repeat(auto-fill,minmax(120px,1fr))]'
+            ? 'grid-cols-[repeat(auto-fill,minmax(120px,1fr))] justify-items-center'
             : '',
           store.cardSize === 'md'
-            ? 'grid-cols-[repeat(auto-fill,minmax(160px,1fr))]'
+            ? 'grid-cols-[repeat(auto-fill,minmax(160px,1fr))] justify-items-center'
             : '',
           store.cardSize === 'lg'
-            ? 'grid-cols-[repeat(auto-fill,minmax(220px,1fr))]'
+            ? 'grid-cols-[repeat(auto-fill,minmax(220px,1fr))] justify-items-center'
             : '',
           'gap-4 sm:gap-6 md:gap-8',
         ]"
@@ -83,11 +90,11 @@
 
       <div
         ref="loadMoreTrigger"
-        class="h-16 mt-6 flex items-center justify-center"
+        class="flex items-center justify-center h-16 mt-6"
       >
         <svg
           v-if="loading && currentPage > 1"
-          class="animate-spin h-5 w-5 text-white"
+          class="w-5 h-5 text-white animate-spin"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -113,11 +120,11 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from "vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, useWindowSize } from "@vueuse/core";
 import { useMovies } from "../composables/useMovies";
 import { useMovieStore } from "../store/movieStore";
 import MovieCard from "../components/MovieCard.vue";
-import { Carousel, Slide, Pagination } from "vue3-carousel";
+import { Carousel, Slide, Navigation } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
 import axios from "axios";
 
@@ -127,6 +134,17 @@ const store = useMovieStore();
 const { getPopularMovies, searchMovies } = useMovies();
 const nowPlayingMovies = ref<any[]>([]);
 const isDragging = ref(false);
+
+const { width } = useWindowSize();
+
+const responsiveItemsToShow = computed(() => {
+  if (width.value < 480) return 2;
+  if (width.value < 768) return 3;
+  if (width.value < 1024) return 4;
+  if (store.cardSize === "lg") return 5;
+  if (store.cardSize === "md") return 6;
+  return 7;
+});
 
 const getNowPlayingMovies = async (page = 1) => {
   const { data } = await axios.get(
@@ -217,10 +235,21 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style>
 .carousel__slide {
   display: block;
   opacity: var(--carousel-opacity-inactive);
   transform: translateX(10px) rotateY(-12deg) scale(0.9);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  justify-items: center;
+}
+
+.carousel__pagination-button {
+  background-color: #3f3f46; /* zinc-700 */
+  opacity: 0.6;
+}
+.carousel__pagination-button--active {
+  background-color: #6366f1; /* indigo-500 */
+  opacity: 1;
 }
 </style>

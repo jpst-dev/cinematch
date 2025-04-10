@@ -112,24 +112,24 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-zinc-900 text-white px-4 sm:px-6 lg:px-8 py-6">
-    <div class="max-w-7xl mx-auto">
+  <div class="min-h-screen px-4 py-6 text-white bg-zinc-900 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl">
       <div
-        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b border-zinc-700 pb-4"
+        class="flex flex-col gap-4 pb-4 mb-6 border-b sm:flex-row sm:items-center sm:justify-between border-zinc-700"
       >
         <h1 class="text-3xl font-bold text-white">Explorar</h1>
         <div
-          class="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto sm:justify-end"
+          class="flex flex-col w-full gap-2 sm:flex-row sm:items-center sm:w-auto sm:justify-end"
         >
           <input
             v-model="search"
             type="text"
             placeholder="Buscar em todo o acervo..."
-            class="p-2 border border-zinc-700 bg-zinc-800 text-white rounded w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full p-2 text-white border rounded border-zinc-700 bg-zinc-800 sm:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           <select
             v-model="selectedGenre"
-            class="p-2 border border-zinc-700 bg-zinc-800 text-white rounded w-full sm:w-48 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full p-2 text-white border rounded border-zinc-700 bg-zinc-800 sm:w-48 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">Todos os gêneros</option>
             <option v-for="genre in genres" :key="genre.id" :value="genre.id">
@@ -138,7 +138,7 @@ onMounted(() => {
           </select>
           <select
             v-model="selectedSort"
-            class="p-2 border border-zinc-700 bg-zinc-800 text-white rounded w-full sm:w-48 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full p-2 text-white border rounded border-zinc-700 bg-zinc-800 sm:w-48 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option
               v-for="option in sortOptions"
@@ -153,13 +153,13 @@ onMounted(() => {
 
       <div
         v-if="loading && currentPage === 1"
-        class="text-center py-10 text-gray-400"
+        class="py-10 text-center text-gray-400"
       >
         Carregando filmes...
       </div>
       <div
         v-else-if="movies.length === 0"
-        class="text-center py-10 text-gray-400"
+        class="py-10 text-center text-gray-400"
       >
         Nenhum filme encontrado.
       </div>
@@ -169,13 +169,13 @@ onMounted(() => {
         class="grid"
         :class="[
           store.cardSize === 'sm'
-            ? 'grid-cols-[repeat(auto-fill,minmax(120px,1fr))]'
+            ? 'grid-cols-[repeat(auto-fill,minmax(120px,1fr))] justify-items-center'
             : '',
           store.cardSize === 'md'
-            ? 'grid-cols-[repeat(auto-fill,minmax(160px,1fr))]'
+            ? 'grid-cols-[repeat(auto-fill,minmax(160px,1fr))] justify-items-center'
             : '',
           store.cardSize === 'lg'
-            ? 'grid-cols-[repeat(auto-fill,minmax(220px,1fr))]'
+            ? 'grid-cols-[repeat(auto-fill,minmax(220px,1fr))] justify-items-center'
             : '',
           'gap-4 sm:gap-6 md:gap-8',
         ]"
@@ -190,11 +190,11 @@ onMounted(() => {
 
       <div
         ref="loadMoreTrigger"
-        class="h-16 mt-6 flex items-center justify-center"
+        class="flex items-center justify-center h-16 mt-6"
       >
         <svg
           v-if="loading && currentPage > 1"
-          class="animate-spin h-5 w-5 text-white"
+          class="w-5 h-5 text-white animate-spin"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"

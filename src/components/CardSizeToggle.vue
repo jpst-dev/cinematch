@@ -1,5 +1,5 @@
 <template>
-  <div class="flex gap-2 items-center">
+  <div class="flex items-center gap-2">
     <button
       v-for="size in sizes"
       :key="size.value"

@@ -75,13 +75,13 @@ onMounted(() => {
         class="grid"
         :class="[
           store.cardSize === 'sm'
-            ? 'grid-cols-[repeat(auto-fill,minmax(120px,1fr))]'
+            ? 'grid-cols-[repeat(auto-fill,minmax(120px,1fr))] justify-items-center'
             : '',
           store.cardSize === 'md'
-            ? 'grid-cols-[repeat(auto-fill,minmax(160px,1fr))]'
+            ? 'grid-cols-[repeat(auto-fill,minmax(160px,1fr))] justify-items-center'
             : '',
           store.cardSize === 'lg'
-            ? 'grid-cols-[repeat(auto-fill,minmax(220px,1fr))]'
+            ? 'grid-cols-[repeat(auto-fill,minmax(220px,1fr))] justify-items-center'
             : '',
           'gap-4 sm:gap-6 md:gap-8',
         ]"

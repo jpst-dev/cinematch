@@ -1,25 +1,25 @@
 <template>
-  <div class="min-h-screen bg-zinc-900 text-white px-4 sm:px-6 lg:px-8 py-6">
-    <div v-if="loading" class="text-center py-10 text-gray-400">
+  <div class="min-h-screen px-4 py-6 text-white bg-zinc-900 sm:px-6 lg:px-8">
+    <div v-if="loading" class="py-10 text-center text-gray-400">
       Carregando detalhes do filme...
     </div>
 
-    <div v-else-if="!movie" class="text-center py-10 text-red-400">
+    <div v-else-if="!movie" class="py-10 text-center text-red-400">
       Filme não encontrado.
     </div>
 
-    <div v-else class="max-w-7xl mx-auto space-y-12">
+    <div v-else class="mx-auto space-y-12 max-w-7xl">
       <!-- Detalhes principais -->
       <div
-        class="flex flex-col md:flex-row gap-8 bg-zinc-800 p-6 rounded-lg shadow-lg"
+        class="flex flex-col gap-8 p-6 rounded-lg shadow-lg md:flex-row bg-zinc-800"
       >
         <img
           :src="`https://image.tmdb.org/t/p/w400${movie.poster_path}`"
           :alt="movie.title"
           class="w-full md:w-[300px] max-h-[460px] rounded-lg shadow-md object-cover"
         />
-        <div class="flex-1 flex flex-col">
-          <div class="space-y-4 flex-1">
+        <div class="flex flex-col flex-1">
+          <div class="flex-1 space-y-4">
             <h1 class="text-3xl font-bold">{{ movie.title }}</h1>
             <p class="text-sm text-zinc-400">
               {{ movie.release_date }} • {{ movie.runtime }} min
@@ -30,7 +30,7 @@
               <span
                 v-for="genre in movie.genres"
                 :key="genre.id"
-                class="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs"
+                class="px-3 py-1 text-xs text-white bg-indigo-600 rounded-full"
               >
                 {{ genre.name }}
               </span>
@@ -38,7 +38,7 @@
 
             <div
               v-if="director || writer"
-              class="text-sm text-zinc-400 space-y-1"
+              class="space-y-1 text-sm text-zinc-400"
             >
               <p v-if="director">
                 <span class="text-zinc-300">Diretor:</span> {{ director }}
@@ -48,7 +48,7 @@
               </p>
             </div>
 
-            <p class="text-zinc-200 mt-4 leading-relaxed">
+            <p class="mt-4 leading-relaxed text-zinc-200">
               {{ movie.overview }}
             </p>
           </div>
@@ -56,7 +56,7 @@
           <!-- Onde assistir -->
           <div
             v-if="watchProviders?.flatrate?.length"
-            class="mt-auto pt-4 flex items-center gap-2 flex-wrap border-t border-zinc-700"
+            class="flex flex-wrap items-center gap-2 pt-4 mt-auto border-t border-zinc-700"
           >
             <span class="text-sm text-zinc-400">Disponível em:</span>
             <a
@@ -65,7 +65,7 @@
               :href="watchProviders.link"
               target="_blank"
               rel="noopener noreferrer"
-              class="hover:scale-110 transition-transform"
+              class="transition-transform hover:scale-110"
             >
               <img
                 :src="`https://image.tmdb.org/t/p/w45${provider.logo_path}`"
@@ -81,7 +81,7 @@
       <!-- Trailer -->
       <div
         v-if="trailerUrl"
-        class="aspect-video w-full rounded-lg overflow-hidden shadow-lg"
+        class="w-full overflow-hidden rounded-lg shadow-lg aspect-video"
       >
         <iframe
           :src="trailerUrl"
@@ -94,16 +94,16 @@
 
       <!-- Elenco -->
       <section v-if="cast.length" class="space-y-4">
-        <h2 class="text-xl font-semibold border-b pb-2 border-zinc-700">
+        <h2 class="pb-2 text-xl font-semibold border-b border-zinc-700">
           Elenco principal
         </h2>
         <div
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
+          class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
         >
           <div
             v-for="actor in cast"
             :key="actor.id"
-            class="bg-zinc-800 rounded-lg p-3 text-center shadow hover:shadow-md transition"
+            class="p-3 text-center transition rounded-lg shadow bg-zinc-800 hover:shadow-md"
           >
             <img
               v-if="actor.profile_path"
@@ -118,7 +118,7 @@
               Sem imagem
             </div>
             <h3 class="text-sm font-semibold truncate">{{ actor.name }}</h3>
-            <p class="text-xs text-zinc-400 truncate">
+            <p class="text-xs truncate text-zinc-400">
               como {{ actor.character }}
             </p>
           </div>
@@ -126,17 +126,25 @@
       </section>
 
       <!-- Recomendados -->
-      <section v-if="recommendations.length" class="space-y-6 mt-10">
+      <section v-if="recommendations.length" class="mt-10 space-y-6">
         <h2 class="text-xl font-bold text-white">Filmes recomendados</h2>
 
         <div class="relative">
           <Carousel
             :items-to-show="getItemsToShow"
+            :items-to-scroll="getItemsToShow"
+            :breakpoints="{
+              480: { itemsToShow: 2, itemsToScroll: 2 },
+              640: { itemsToShow: 4, itemsToScroll: 4 },
+              768: { itemsToShow: 5, itemsToScroll: 5 },
+              1024: { itemsToShow: 6, itemsToScroll: 6 },
+              1280: { itemsToShow: 7, itemsToScroll: 7 },
+            }"
+            :loop="true"
             :wrap-around="true"
             :mouse-drag="true"
             :pause-autoplay-on-hover="true"
             :autoplay="5000"
-            :gap="16"
             :mouse-wheel="true"
             class="w-full"
           >
@@ -203,8 +211,10 @@ import { useWindowSize } from "@vueuse/core";
 const { width } = useWindowSize();
 
 const getItemsToShow = computed(() => {
-  if (width.value < 640) return 4;
-  if (width.value < 768) return 5;
+  if (width.value < 380) return 2;
+  if (width.value < 640) return 3;
+  if (width.value < 768) return 4;
+  if (width.value < 1024) return 5;
   if (store.cardSize === "lg") return 7;
   if (store.cardSize === "md") return 8;
   return 9;
@@ -254,6 +264,7 @@ const fetchMovieDetails = async (id: string) => {
 };
 
 onMounted(() => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
   const id = route.params.id as string;
   fetchMovieDetails(id);
 });
