@@ -81,7 +81,7 @@ Este projeto foi desenvolvido com o objetivo de unir estética e funcionalidade 
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-user/cinematch.git
+git clone https://github.com/jpst-dev/cinematch.git
 
 # Instale as dependências
 npm install
