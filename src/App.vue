@@ -1,13 +1,16 @@
 <template>
-  <div class="min-h-screen font-sans text-white bg-zinc-900">
+  <div class="app-shell font-sans">
     <Navbar />
-    <router-view />
+    <main class="pb-16">
+      <router-view />
+    </main>
     <button
       v-show="showBackToTop"
       @click="scrollToTop"
-      class="fixed px-4 py-2 text-white transition-opacity bg-indigo-600 rounded-full shadow-lg bottom-6 right-6 hover:bg-indigo-700"
+      class="app-button-primary fixed bottom-6 right-6 z-40 px-3 py-2 shadow-lg"
+      aria-label="Voltar ao topo"
     >
-      ↑ Topo
+      Topo
     </button>
   </div>
 </template>

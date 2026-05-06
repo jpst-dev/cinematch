@@ -1,13 +1,10 @@
 <template>
-  <div class="min-h-screen px-4 py-6 text-white bg-zinc-900 sm:px-6 lg:px-8">
-    <section
-      v-if="nowPlayingMovies.length"
-      class="flex flex-col items-center p-4 mb-10 rounded-lg shadow-lg bg-zinc-800"
-      :class="store.cardSize === 'sm' ? 'max-w-7xl mx-auto' : ''"
-    >
-      <h2 class="mb-4 text-2xl font-bold text-center text-gray-200">
-        <span class="animate-pulse">🎬</span> Em Cartaz
-      </h2>
+  <PageContainer>
+    <section v-if="nowPlayingMovies.length" class="app-panel mb-10 p-4 sm:p-6">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="app-section-title">Em cartaz</h2>
+        <span class="text-sm text-app-muted">Atualizado diariamente</span>
+      </div>
       <Carousel
         :items-to-show="responsiveItemsToShow"
         :items-to-scroll="responsiveItemsToShow"
@@ -41,7 +38,8 @@
           <MovieCard
             :movie="movie"
             :size="store.cardSize"
-            class="w-full h-full"
+            class="h-full w-full"
+            @select="$router.push(`/filme/${movie.id}`)"
           />
         </Slide>
         <template #addons>
@@ -49,87 +47,49 @@
         </template>
       </Carousel>
     </section>
-    <div class="mx-auto max-w-7xl">
-      <div
-        v-if="loading && currentPage === 1"
-        class="py-10 text-center text-gray-400"
-      >
-        Carregando filmes...
-      </div>
-      <div
-        v-else-if="Array.isArray(filteredMovies) && filteredMovies.length === 0"
-        class="py-10 text-center text-gray-400"
-      >
-        Nenhum filme encontrado.
-      </div>
 
-      <div
-        v-else
-        class="grid"
-        :class="[
-          store.cardSize === 'sm'
-            ? 'grid-cols-[repeat(auto-fill,minmax(120px,1fr))] justify-items-center'
-            : '',
-          store.cardSize === 'md'
-            ? 'grid-cols-[repeat(auto-fill,minmax(160px,1fr))] justify-items-center'
-            : '',
-          store.cardSize === 'lg'
-            ? 'grid-cols-[repeat(auto-fill,minmax(220px,1fr))] justify-items-center'
-            : '',
-          'gap-4 sm:gap-6 md:gap-8',
-        ]"
-      >
-        <MovieCard
-          v-for="movie in filteredMovies"
-          :key="movie.id"
-          :movie="movie"
-          :size="store.cardSize"
-          @mouseup="() => $router.push(`/filme/${movie.id}`)"
-        />
-      </div>
+    <AppSpinner v-if="loading && currentPage === 1" label="Carregando filmes..." />
 
-      <div
-        ref="loadMoreTrigger"
-        class="flex items-center justify-center h-16 mt-6"
-      >
-        <svg
-          v-if="loading && currentPage > 1"
-          class="w-5 h-5 text-white animate-spin"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          />
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-          />
-        </svg>
-      </div>
+    <div
+      v-else-if="Array.isArray(filteredMovies) && filteredMovies.length === 0"
+      class="py-10 text-center text-app-muted"
+    >
+      Nenhum filme encontrado.
     </div>
-  </div>
+
+    <div v-else :class="getMovieGridClass(store.cardSize)">
+      <MovieCard
+        v-for="movie in filteredMovies"
+        :key="movie.id"
+        :movie="movie"
+        :size="store.cardSize"
+        @select="$router.push(`/filme/${movie.id}`)"
+      />
+    </div>
+
+    <div ref="loadMoreTrigger" class="mt-6 flex h-16 items-center justify-center">
+      <AppSpinner
+        v-if="loading && currentPage > 1"
+        class="py-0"
+        label="Buscando mais filmes..."
+      />
+    </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from "vue";
-import { useDebounceFn, useWindowSize } from "@vueuse/core";
+import { ref, onMounted, computed } from "vue";
+import { useWindowSize } from "@vueuse/core";
 import { useMovies } from "../composables/useMovies";
 import { useMovieStore } from "../store/movieStore";
 import MovieCard from "../components/MovieCard.vue";
+import PageContainer from "../components/ui/PageContainer.vue";
+import AppSpinner from "../components/ui/AppSpinner.vue";
 import { Carousel, Slide, Navigation } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
 import axios from "axios";
+import { getMovieGridClass } from "../utils/movieGrid";
 
-const search = ref("");
-const minRating = ref(0);
 const store = useMovieStore();
 const { getPopularMovies, searchMovies } = useMovies();
 const nowPlayingMovies = ref<any[]>([]);
@@ -165,9 +125,7 @@ const fetchNowPlaying = async () => {
 };
 
 const movies = computed(() => store.movies);
-const filteredMovies = computed(() =>
-  movies.value.filter((m) => m.vote_average >= minRating.value)
-);
+const filteredMovies = computed(() => movies.value);
 const loading = computed(() => store.isLoading);
 const currentPage = computed(() => store.currentPage);
 const loadMoreTrigger = ref<HTMLElement | null>(null);
@@ -180,23 +138,6 @@ const fetchInitial = async () => {
   store.setSearchMode(false);
   store.setLoading(false);
 };
-
-const handleSearch = useDebounceFn(async () => {
-  store.setLoading(true);
-  if (search.value.trim() === "") {
-    await fetchInitial();
-    return;
-  }
-  const data = await searchMovies(search.value, 1);
-  store.setMovies(data);
-  store.setPage(2);
-  store.setSearchMode(true, search.value);
-  store.setLoading(false);
-}, 500);
-
-watch(search, () => {
-  handleSearch();
-});
 
 const loadMore = async () => {
   if (loading.value) return;
@@ -234,22 +175,3 @@ onMounted(() => {
   createObserver();
 });
 </script>
-
-<style>
-.carousel__slide {
-  display: block;
-  opacity: var(--carousel-opacity-inactive);
-  transform: translateX(10px) rotateY(-12deg) scale(0.9);
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  justify-items: center;
-}
-
-.carousel__pagination-button {
-  background-color: #3f3f46; /* zinc-700 */
-  opacity: 0.6;
-}
-.carousel__pagination-button--active {
-  background-color: #6366f1; /* indigo-500 */
-  opacity: 1;
-}
-</style>

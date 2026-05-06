@@ -1,27 +1,25 @@
 <template>
-  <div class="min-h-screen px-4 py-6 text-white bg-zinc-900 sm:px-6 lg:px-8">
-    <div v-if="loading" class="py-10 text-center text-gray-400">
-      Carregando detalhes do filme...
-    </div>
+  <PageContainer>
+    <AppSpinner v-if="loading" label="Carregando detalhes do filme..." />
 
     <div v-else-if="!movie" class="py-10 text-center text-red-400">
       Filme não encontrado.
     </div>
 
-    <div v-else class="mx-auto space-y-12 max-w-7xl">
+    <div v-else class="space-y-12">
       <!-- Detalhes principais -->
       <div
-        class="flex flex-col gap-8 p-6 rounded-lg shadow-lg md:flex-row bg-zinc-800"
+        class="app-panel flex flex-col gap-8 p-6 md:flex-row"
       >
         <img
           :src="`https://image.tmdb.org/t/p/w400${movie.poster_path}`"
           :alt="movie.title"
-          class="w-full md:w-[300px] max-h-[460px] rounded-lg shadow-md object-cover"
+          class="max-h-[460px] w-full rounded-lg object-cover shadow-md md:w-[300px]"
         />
         <div class="flex flex-col flex-1">
           <div class="flex-1 space-y-4">
-            <h1 class="text-3xl font-bold">{{ movie.title }}</h1>
-            <p class="text-sm text-zinc-400">
+            <h1 class="text-3xl font-bold text-app-text">{{ movie.title }}</h1>
+            <p class="text-sm text-app-muted">
               {{ movie.release_date }} • {{ movie.runtime }} min
             </p>
             <p class="text-sm text-zinc-300">Nota: {{ movie.vote_average }}</p>
@@ -30,7 +28,7 @@
               <span
                 v-for="genre in movie.genres"
                 :key="genre.id"
-                class="px-3 py-1 text-xs text-white bg-indigo-600 rounded-full"
+                class="rounded-full bg-app-brand px-3 py-1 text-xs text-white"
               >
                 {{ genre.name }}
               </span>
@@ -38,7 +36,7 @@
 
             <div
               v-if="director || writer"
-              class="space-y-1 text-sm text-zinc-400"
+              class="space-y-1 text-sm text-app-muted"
             >
               <p v-if="director">
                 <span class="text-zinc-300">Diretor:</span> {{ director }}
@@ -56,9 +54,9 @@
           <!-- Onde assistir -->
           <div
             v-if="watchProviders?.flatrate?.length"
-            class="flex flex-wrap items-center gap-2 pt-4 mt-auto border-t border-zinc-700"
+            class="mt-auto flex flex-wrap items-center gap-2 border-t border-app-border pt-4"
           >
-            <span class="text-sm text-zinc-400">Disponível em:</span>
+            <span class="text-sm text-app-muted">Disponível em:</span>
             <a
               v-for="provider in watchProviders.flatrate"
               :key="provider.provider_id"
@@ -94,7 +92,7 @@
 
       <!-- Elenco -->
       <section v-if="cast.length" class="space-y-4">
-        <h2 class="pb-2 text-xl font-semibold border-b border-zinc-700">
+        <h2 class="border-b border-app-border pb-2 text-xl font-semibold">
           Elenco principal
         </h2>
         <div
@@ -103,7 +101,7 @@
           <div
             v-for="actor in cast"
             :key="actor.id"
-            class="p-3 text-center transition rounded-lg shadow bg-zinc-800 hover:shadow-md"
+            class="app-panel rounded-lg p-3 text-center transition hover:shadow-md"
           >
             <img
               v-if="actor.profile_path"
@@ -127,7 +125,7 @@
 
       <!-- Recomendados -->
       <section v-if="recommendations.length" class="mt-10 space-y-6">
-        <h2 class="text-xl font-bold text-white">Filmes recomendados</h2>
+        <h2 class="text-xl font-bold text-app-text">Filmes recomendados</h2>
 
         <div class="relative">
           <Carousel
@@ -162,7 +160,11 @@
                 }
               "
             >
-              <MovieCard :movie="rec" size="sm" />
+              <MovieCard
+                :movie="rec"
+                size="sm"
+                @select="$router.push(`/filme/${rec.id}`)"
+              />
             </Slide>
 
             <template #addons>
@@ -172,7 +174,7 @@
         </div>
       </section>
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
@@ -183,6 +185,8 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useMovieDetail } from "../composables/useMovieDetail";
 import MovieCard from "../components/MovieCard.vue";
+import PageContainer from "../components/ui/PageContainer.vue";
+import AppSpinner from "../components/ui/AppSpinner.vue";
 import { computed } from "vue";
 import { watch } from "vue";
 
@@ -269,27 +273,3 @@ onMounted(() => {
   fetchMovieDetails(id);
 });
 </script>
-
-<style>
-.carousel__slide {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.carousel__prev,
-.carousel__next {
-  background-color: rgba(63, 63, 70, 0.8); /* bg-zinc-700/80 */
-  border-radius: 9999px;
-  width: 36px;
-  height: 36px;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s ease;
-}
-
-.carousel__prev:hover,
-.carousel__next:hover {
-  background-color: rgba(99, 102, 241, 0.7); /* hover:bg-indigo-500/70 */
-}
-</style>

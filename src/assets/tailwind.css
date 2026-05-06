@@ -1,3 +1,95 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #app {
+    @apply min-h-screen bg-app-bg text-app-text;
+  }
+
+  body {
+    @apply antialiased;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-app-brand ring-offset-2 ring-offset-app-bg;
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply min-h-screen bg-app-bg text-app-text;
+  }
+
+  .app-page {
+    @apply px-4 py-6 sm:px-6 lg:px-8;
+  }
+
+  .app-page-inner {
+    @apply mx-auto w-full max-w-7xl;
+  }
+
+  .app-panel {
+    @apply rounded-panel border border-app-border bg-app-surface shadow-panel;
+  }
+
+  .app-input {
+    @apply w-full rounded-lg border border-app-border bg-app-surfaceSoft px-3 py-2 text-sm text-app-text placeholder:text-app-muted;
+  }
+
+  .app-select {
+    @apply w-full rounded-lg border border-app-border bg-app-surfaceSoft px-3 py-2 text-sm text-app-text;
+  }
+
+  .app-button-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-app-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-app-brandHover;
+  }
+
+  .app-button-ghost {
+    @apply inline-flex items-center justify-center rounded-lg border border-app-border bg-app-surface px-3 py-2 text-sm font-medium text-app-muted transition hover:text-app-text;
+  }
+
+  .app-section-title {
+    @apply text-2xl font-bold tracking-tight text-app-text;
+  }
+
+  .movie-grid {
+    @apply grid gap-4 sm:gap-6 md:gap-8;
+  }
+
+  .movie-grid-sm {
+    @apply grid-cols-[repeat(auto-fill,minmax(120px,1fr))] justify-items-center;
+  }
+
+  .movie-grid-md {
+    @apply grid-cols-[repeat(auto-fill,minmax(160px,1fr))] justify-items-center;
+  }
+
+  .movie-grid-lg {
+    @apply grid-cols-[repeat(auto-fill,minmax(220px,1fr))] justify-items-center;
+  }
+
+  .carousel__slide {
+    @apply transition-opacity duration-300;
+  }
+
+  .carousel__prev,
+  .carousel__next {
+    @apply flex h-9 w-9 items-center justify-center rounded-full bg-zinc-700/80 text-white transition;
+  }
+
+  .carousel__prev:hover,
+  .carousel__next:hover {
+    @apply bg-app-brand/80;
+  }
+
+  .carousel__pagination-button {
+    @apply bg-zinc-700 opacity-70;
+  }
+
+  .carousel__pagination-button--active {
+    @apply bg-app-brand opacity-100;
+  }
+}

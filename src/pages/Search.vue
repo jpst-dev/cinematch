@@ -1,64 +1,34 @@
 <template>
-  <div class="min-h-screen bg-zinc-900 text-white p-6">
-    <input
-      v-model="query"
-      type="text"
-      placeholder="Buscar filmes..."
-      class="w-full max-w-lg mb-4 p-2 border border-zinc-700 bg-zinc-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
-    />
+  <PageContainer>
+    <header class="app-panel mb-6 p-4 sm:p-5">
+      <h1 class="app-section-title mb-3">Resultados da busca</h1>
+      <AppInput
+        v-model="query"
+        placeholder="Buscar filmes..."
+        input-class="max-w-xl"
+      />
+    </header>
 
-    <div
-      v-if="loading && movies.length === 0"
-      class="text-center py-10 text-gray-400"
-    >
-      Carregando...
-    </div>
-    <div
-      v-else-if="movies.length === 0"
-      class="text-center py-10 text-gray-400"
-    >
+    <AppSpinner v-if="loading && movies.length === 0" />
+
+    <div v-else-if="movies.length === 0" class="py-10 text-center text-app-muted">
       Nenhum resultado encontrado.
     </div>
 
-    <div
-      class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4 sm:gap-6 md:gap-8"
-    >
+    <div v-else :class="getMovieGridClass(store.cardSize)">
       <MovieCard
         v-for="movie in movies"
         :key="movie.id"
         :movie="movie"
-        size="md"
-        @mouseup="() => $router.push(`/filme/${movie.id}`)"
+        :size="store.cardSize"
+        @select="$router.push(`/filme/${movie.id}`)"
       />
     </div>
 
-    <div
-      ref="loadMoreTrigger"
-      class="h-16 mt-6 flex items-center justify-center"
-    >
-      <svg
-        v-if="loading && movies.length > 0"
-        class="animate-spin h-5 w-5 text-white"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          class="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-        />
-        <path
-          class="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-        />
-      </svg>
+    <div ref="loadMoreTrigger" class="mt-6 flex h-16 items-center justify-center">
+      <AppSpinner v-if="loading && movies.length > 0" class="py-0" />
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
@@ -66,9 +36,15 @@ import { ref, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useDebounceFn } from "@vueuse/core";
 import { useMovies } from "../composables/useMovies";
+import { useMovieStore } from "../store/movieStore";
 import MovieCard from "../components/MovieCard.vue";
+import PageContainer from "../components/ui/PageContainer.vue";
+import AppInput from "../components/ui/AppInput.vue";
+import AppSpinner from "../components/ui/AppSpinner.vue";
+import { getMovieGridClass } from "../utils/movieGrid";
 
 const { searchMovies } = useMovies();
+const store = useMovieStore();
 const route = useRoute();
 
 const query = ref(typeof route.query.q === "string" ? route.query.q : "");
@@ -78,7 +54,10 @@ const loading = ref(false);
 const loadMoreTrigger = ref<HTMLElement | null>(null);
 
 const search = async (reset = false) => {
-  if (!query.value) return;
+  if (!query.value) {
+    movies.value = [];
+    return;
+  }
   loading.value = true;
   const results = await searchMovies(query.value, page.value);
   if (reset) {

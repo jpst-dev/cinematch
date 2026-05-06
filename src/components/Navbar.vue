@@ -1,102 +1,116 @@
 <template>
-  <div class="sticky top-0 z-50 shadow-md bg-zinc-800">
-    <div
-      class="flex flex-wrap items-center justify-between gap-4 px-4 py-4 mx-auto max-w-7xl sm:px-6 lg:px-8"
-    >
-      <!-- Botão Mobile -->
-      <button
-        @click="toggleMobileMenu"
-        class="text-white sm:hidden focus:outline-none"
-      >
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
-      </button>
+  <header class="sticky top-0 z-50 border-b border-app-border/80 bg-app-bg/95 backdrop-blur">
+    <div class="app-page py-3">
+      <div class="app-page-inner">
+        <div class="app-panel px-3 py-3 sm:px-4">
+          <div class="flex items-center justify-between gap-3">
+            <router-link to="/" class="text-lg font-bold tracking-tight text-app-text">
+              CineMatch
+            </router-link>
 
-      <!-- Logo (opcional colocar nome aqui) -->
-      <router-link to="/" class="hidden text-xl font-bold text-white sm:block">
-        CineMatch
-      </router-link>
+            <button
+              @click="toggleMobileMenu"
+              class="app-button-ghost sm:hidden"
+              type="button"
+              :aria-expanded="mobileMenuOpen"
+              aria-label="Abrir menu de navegação"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
 
-      <!-- Menu Links -->
-      <div
-        :class="[
-          'flex-col sm:flex-row sm:flex gap-6 text-sm sm:text-base',
-          mobileMenuOpen ? 'flex w-full sm:w-auto' : 'hidden sm:flex',
-        ]"
-      >
-        <router-link
-          v-for="link in links"
-          :key="link.to"
-          :to="link.to"
-          class="text-white hover:underline"
-          :class="{ 'text-indigo-400 font-semibold': isActiveRoute(link.to) }"
-        >
-          {{ link.label }}
-        </router-link>
-      </div>
-
-      <!-- Search + Card Size -->
-      <div
-        ref="searchWrapper"
-        class="relative flex-1 w-full sm:flex-none sm:w-auto"
-      >
-        <div class="relative z-10 flex items-center w-full gap-2">
-          <input
-            v-model="search"
-            @keydown.enter="goToSearch"
-            @input="debouncedFetch"
-            type="text"
-            placeholder="Buscar..."
-            class="w-full p-2 text-white border rounded sm:w-64 border-zinc-600 bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-          <CardSizeToggle />
-        </div>
-
-        <!-- Gaveta de sugestões -->
-        <div
-          v-if="searching || suggestions.length"
-          class="absolute left-0 z-40 w-full mt-1 overflow-hidden border rounded shadow-md top-full bg-zinc-800 border-zinc-700"
-        >
-          <div v-if="searching" class="p-3 text-sm text-center text-gray-400">
-            Carregando...
+            <nav class="hidden items-center gap-2 sm:flex">
+              <router-link
+                v-for="link in links"
+                :key="link.to"
+                :to="link.to"
+                class="rounded-md px-3 py-2 text-sm font-medium transition"
+                :class="
+                  isActiveRoute(link.to)
+                    ? 'bg-app-brand/20 text-indigo-300'
+                    : 'text-app-muted hover:bg-app-surfaceSoft hover:text-app-text'
+                "
+              >
+                {{ link.label }}
+              </router-link>
+            </nav>
           </div>
-          <router-link
-            v-for="movie in suggestions"
-            :key="movie.id"
-            :to="`/filme/${movie.id}`"
-            class="flex items-center gap-2 p-2 transition hover:bg-zinc-700"
-            @click="clearSuggestions"
-          >
-            <img
-              :src="getPosterUrl(movie.poster_path)"
-              alt="poster"
-              class="object-cover w-10 rounded h-14"
-            />
-            <span class="truncate">{{ movie.title }}</span>
-          </router-link>
+
+          <div class="relative mt-3" ref="searchWrapper">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <AppInput
+                v-model="search"
+                @enter="goToSearch"
+                @input="debouncedFetch"
+                placeholder="Buscar filme, ator ou palavra-chave..."
+                input-class="sm:max-w-lg"
+              />
+              <div class="flex items-center justify-between gap-2 sm:ml-auto">
+                <AppButton button-class="px-3 py-2" @click="goToSearch">Buscar</AppButton>
+                <CardSizeToggle />
+              </div>
+            </div>
+
+            <div
+              v-if="searching || suggestions.length"
+              class="app-panel absolute left-0 right-0 top-full z-40 mt-2 overflow-hidden"
+            >
+              <div v-if="searching" class="p-3 text-center text-sm text-app-muted">
+                Carregando sugestões...
+              </div>
+              <router-link
+                v-for="movie in suggestions"
+                :key="movie.id"
+                :to="`/filme/${movie.id}`"
+                class="flex items-center gap-3 border-b border-app-border/60 p-3 transition last:border-b-0 hover:bg-app-surfaceSoft"
+                @click="clearSuggestions"
+              >
+                <img
+                  :src="getPosterUrl(movie.poster_path)"
+                  alt="Poster do filme"
+                  class="h-14 w-10 rounded object-cover"
+                />
+                <span class="truncate text-sm">{{ movie.title }}</span>
+              </router-link>
+            </div>
+          </div>
+
+          <nav v-if="mobileMenuOpen" class="mt-3 grid gap-1 border-t border-app-border/70 pt-3 sm:hidden">
+            <router-link
+              v-for="link in links"
+              :key="`mobile-${link.to}`"
+              :to="link.to"
+              class="rounded-md px-3 py-2 text-sm font-medium transition"
+              :class="
+                isActiveRoute(link.to)
+                  ? 'bg-app-brand/20 text-indigo-300'
+                  : 'text-app-muted hover:bg-app-surfaceSoft hover:text-app-text'
+              "
+              @click="mobileMenuOpen = false"
+            >
+              {{ link.label }}
+            </router-link>
+          </nav>
         </div>
       </div>
     </div>
-  </div>
+  </header>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDebounceFn } from "@vueuse/core";
 import { useMovies } from "../composables/useMovies";
 import CardSizeToggle from "./CardSizeToggle.vue";
+import AppInput from "./ui/AppInput.vue";
+import AppButton from "./ui/AppButton.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -161,4 +175,11 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("click", handleClickOutside);
 });
+
+watch(
+  () => route.fullPath,
+  () => {
+    mobileMenuOpen.value = false;
+  }
+);
 </script>

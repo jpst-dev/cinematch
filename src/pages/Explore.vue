@@ -4,7 +4,12 @@ import { useDebounceFn } from "@vueuse/core";
 import { useMovies } from "../composables/useMovies";
 import { useMovieStore } from "../store/movieStore";
 import MovieCard from "../components/MovieCard.vue";
+import PageContainer from "../components/ui/PageContainer.vue";
+import AppInput from "../components/ui/AppInput.vue";
+import AppSelect from "../components/ui/AppSelect.vue";
+import AppSpinner from "../components/ui/AppSpinner.vue";
 import axios from "axios";
+import { getMovieGridClass } from "../utils/movieGrid";
 
 const sortOptions = [
   { label: "Nota (maior)", value: "vote_average.desc" },
@@ -85,10 +90,6 @@ watch(search, () => {
   handleSearch();
 });
 
-watch(selectedGenre, () => {
-  fetchInitial();
-});
-
 const createObserver = () => {
   if (!loadMoreTrigger.value) return;
   const observer = new IntersectionObserver(
@@ -112,109 +113,59 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen px-4 py-6 text-white bg-zinc-900 sm:px-6 lg:px-8">
-    <div class="mx-auto max-w-7xl">
-      <div
-        class="flex flex-col gap-4 pb-4 mb-6 border-b sm:flex-row sm:items-center sm:justify-between border-zinc-700"
-      >
-        <h1 class="text-3xl font-bold text-white">Explorar</h1>
-        <div
-          class="flex flex-col w-full gap-2 sm:flex-row sm:items-center sm:w-auto sm:justify-end"
-        >
-          <input
-            v-model="search"
-            type="text"
-            placeholder="Buscar em todo o acervo..."
-            class="w-full p-2 text-white border rounded border-zinc-700 bg-zinc-800 sm:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-          <select
-            v-model="selectedGenre"
-            class="w-full p-2 text-white border rounded border-zinc-700 bg-zinc-800 sm:w-48 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="">Todos os gêneros</option>
-            <option v-for="genre in genres" :key="genre.id" :value="genre.id">
-              {{ genre.name }}
-            </option>
-          </select>
-          <select
-            v-model="selectedSort"
-            class="w-full p-2 text-white border rounded border-zinc-700 bg-zinc-800 sm:w-48 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <option
-              v-for="option in sortOptions"
-              :key="option.value"
-              :value="option.value"
-            >
-              {{ option.label }}
-            </option>
-          </select>
-        </div>
+  <PageContainer>
+    <header class="app-panel mb-6 p-4 sm:p-5">
+      <div class="mb-4 flex items-center justify-between border-b border-app-border pb-3">
+        <h1 class="app-section-title">Explorar</h1>
+        <span class="text-sm text-app-muted">Descubra por filtros</span>
       </div>
 
-      <div
-        v-if="loading && currentPage === 1"
-        class="py-10 text-center text-gray-400"
-      >
-        Carregando filmes...
-      </div>
-      <div
-        v-else-if="movies.length === 0"
-        class="py-10 text-center text-gray-400"
-      >
-        Nenhum filme encontrado.
-      </div>
-
-      <div
-        v-else
-        class="grid"
-        :class="[
-          store.cardSize === 'sm'
-            ? 'grid-cols-[repeat(auto-fill,minmax(120px,1fr))] justify-items-center'
-            : '',
-          store.cardSize === 'md'
-            ? 'grid-cols-[repeat(auto-fill,minmax(160px,1fr))] justify-items-center'
-            : '',
-          store.cardSize === 'lg'
-            ? 'grid-cols-[repeat(auto-fill,minmax(220px,1fr))] justify-items-center'
-            : '',
-          'gap-4 sm:gap-6 md:gap-8',
-        ]"
-      >
-        <MovieCard
-          v-for="movie in movies"
-          :key="movie.id"
-          :movie="movie"
-          :size="store.cardSize"
-          @click="() => $router.push(`/filme/${movie.id}`)"
+      <div class="grid gap-2 md:grid-cols-[1fr_auto_auto]">
+        <AppInput
+          v-model="search"
+          placeholder="Buscar em todo o acervo..."
+          input-class="md:min-w-72"
         />
+        <AppSelect v-model="selectedGenre" select-class="md:min-w-56">
+          <option value="">Todos os gêneros</option>
+          <option v-for="genre in genres" :key="genre.id" :value="genre.id">
+            {{ genre.name }}
+          </option>
+        </AppSelect>
+        <AppSelect v-model="selectedSort" select-class="md:min-w-56">
+          <option
+            v-for="option in sortOptions"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
+          </option>
+        </AppSelect>
       </div>
+    </header>
 
-      <div
-        ref="loadMoreTrigger"
-        class="flex items-center justify-center h-16 mt-6"
-      >
-        <svg
-          v-if="loading && currentPage > 1"
-          class="w-5 h-5 text-white animate-spin"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          />
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-          />
-        </svg>
-      </div>
+    <AppSpinner v-if="loading && currentPage === 1" label="Carregando filmes..." />
+
+    <div v-else-if="movies.length === 0" class="py-10 text-center text-app-muted">
+      Nenhum filme encontrado.
     </div>
-  </div>
+
+    <div v-else :class="getMovieGridClass(store.cardSize)">
+      <MovieCard
+        v-for="movie in movies"
+        :key="movie.id"
+        :movie="movie"
+        :size="store.cardSize"
+        @select="$router.push(`/filme/${movie.id}`)"
+      />
+    </div>
+
+    <div ref="loadMoreTrigger" class="mt-6 flex h-16 items-center justify-center">
+      <AppSpinner
+        v-if="loading && currentPage > 1"
+        class="py-0"
+        label="Buscando mais filmes..."
+      />
+    </div>
+  </PageContainer>
 </template>
