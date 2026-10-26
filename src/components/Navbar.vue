@@ -83,6 +83,7 @@
         </button>
 
         <button
+          ref="botaoMenu"
           type="button"
           class="grid h-10 w-10 place-items-center rounded-full text-white transition hover:bg-white/10 lg:hidden"
           :aria-expanded="menuAberto"
@@ -104,11 +105,13 @@
       <div
         v-if="menuAberto"
         id="menu-celular"
+        ref="painelMenu"
         class="fixed inset-0 z-50 flex flex-col bg-app-bg/[0.98] px-6 pb-10 pt-4 lg:hidden"
         role="dialog"
         aria-modal="true"
         aria-label="Menu"
         @keydown.esc="menuAberto = false"
+        @keydown.tab="prenderFoco"
       >
         <div class="flex h-12 items-center justify-between">
           <span class="font-display text-3xl tracking-wide text-app-brand">CINEMATCH</span>
@@ -171,13 +174,28 @@ const solida = computed(() => !paginaComImagem.value || y.value > 40 || buscaAbe
 
 const menuAberto = ref(false);
 const fecharMenu = ref<HTMLButtonElement | null>(null);
+const botaoMenu = ref<HTMLButtonElement | null>(null);
+const painelMenu = ref<HTMLElement | null>(null);
 watch(menuAberto, async (aberto) => {
   document.body.style.overflow = aberto ? "hidden" : "";
-  if (aberto) {
-    await nextTick();
-    fecharMenu.value?.focus();
-  }
+  await nextTick();
+  (aberto ? fecharMenu : botaoMenu).value?.focus();
 });
+
+// Diálogo modal: Tab e Shift+Tab circulam só dentro do menu.
+const prenderFoco = (e: KeyboardEvent) => {
+  const focaveis = painelMenu.value?.querySelectorAll<HTMLElement>("a[href], button");
+  if (!focaveis?.length) return;
+  const primeiro = focaveis[0];
+  const ultimo = focaveis[focaveis.length - 1];
+  if (e.shiftKey && document.activeElement === primeiro) {
+    e.preventDefault();
+    ultimo.focus();
+  } else if (!e.shiftKey && document.activeElement === ultimo) {
+    e.preventDefault();
+    primeiro.focus();
+  }
+};
 
 const buscaAberta = ref(false);
 const termo = ref("");

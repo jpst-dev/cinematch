@@ -13,9 +13,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, toRef } from "vue";
+import { useIntersectionObserver } from "@vueuse/core";
 import PosterCard from "./PosterCard.vue";
 import SkeletonPoster from "./ui/SkeletonPoster.vue";
+import { useCarregarAoVer } from "../composables/useCarregarAoVer";
 import type { Movie } from "../types/movie";
 
 const props = defineProps<{ filmes: Movie[]; carregando: boolean; fim?: boolean }>();
@@ -23,17 +25,12 @@ const emit = defineEmits<{ (e: "mais"): void }>();
 
 // Scroll infinito: pede a próxima página quando o fim da grade se aproxima da tela.
 const sentinela = ref<HTMLElement | null>(null);
-let observer: IntersectionObserver | null = null;
+const visivel = ref(false);
+useIntersectionObserver(sentinela, ([entrada]) => (visivel.value = entrada.isIntersecting), { rootMargin: "600px" });
 
-onMounted(() => {
-  observer = new IntersectionObserver(
-    ([entrada]) => {
-      if (entrada.isIntersecting && !props.carregando && !props.fim && props.filmes.length) emit("mais");
-    },
-    { rootMargin: "600px" }
-  );
-  if (sentinela.value) observer.observe(sentinela.value);
-});
-
-onUnmounted(() => observer?.disconnect());
+useCarregarAoVer(
+  visivel,
+  { carregando: toRef(props, "carregando"), fim: toRef(props, "fim"), total: computed(() => props.filmes.length) },
+  () => emit("mais")
+);
 </script>

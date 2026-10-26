@@ -43,7 +43,7 @@
           />
           <div class="max-w-2xl">
             <h1
-              class="font-display uppercase leading-[0.9] tracking-wide text-white"
+              class="hyphens-auto break-words font-display uppercase leading-[0.9] tracking-wide text-white"
               :class="filme.title.length > 22 ? 'text-5xl sm:text-6xl lg:text-7xl' : 'text-6xl sm:text-7xl lg:text-8xl'"
             >
               {{ filme.title }}

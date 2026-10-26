@@ -36,7 +36,7 @@
             <span class="h-1.5 w-1.5 rounded-full bg-app-brand"></span> Em cartaz
           </p>
           <h2
-            class="font-display uppercase leading-[0.9] tracking-wide text-white"
+            class="hyphens-auto break-words font-display uppercase leading-[0.9] tracking-wide text-white"
             :class="filme.title.length > 22 ? 'text-5xl sm:text-6xl lg:text-7xl' : 'text-6xl sm:text-7xl lg:text-8xl'"
           >
             {{ filme.title }}
