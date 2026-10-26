@@ -2,7 +2,7 @@
 
 Descubra o que assistir: filmes em cartaz, em alta e mais bem avaliados, com trailer, elenco, direção e onde assistir — numa interface escura de sala de cinema, feita para o celular e para telas grandes.
 
-> 🔗 **[cinematch-rho.vercel.app](https://cinematch-rho.vercel.app/)**
+> 🔗 **[cinematch.jteixeira.dev](https://cinematch.jteixeira.dev)**
 
 ![Início do CineMatch](docs/screenshots/inicio.png)
 
