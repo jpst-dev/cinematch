@@ -1,4 +1,4 @@
-import { responderTmdb } from "./_tmdb";
+import { responderTmdb } from "./_tmdb.js"; // extensão obrigatória no ESM da Vercel
 
 // /api/tmdb/<caminho> chega aqui como ?path=<caminho> (rewrite do vercel.json).
 export async function GET(request: Request): Promise<Response> {
