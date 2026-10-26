@@ -4,25 +4,23 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Identidade "Sala escura": preto de cinema + âmbar de luz de projetor.
         app: {
-          bg: "#09090b",
-          surface: "#18181b",
-          surfaceSoft: "#27272a",
-          border: "#3f3f46",
-          text: "#fafafa",
+          bg: "#070707",
+          surface: "#111113",
+          surfaceSoft: "#18181b",
+          border: "#26262b",
+          text: "#f4f4f5",
           muted: "#a1a1aa",
-          brand: "#6366f1",
-          brandHover: "#4f46e5",
+          brand: "#fbbf24",
+          brandHover: "#f59e0b",
         },
       },
-      boxShadow: {
-        panel: "0 10px 35px rgba(0, 0, 0, 0.35)",
-      },
-      borderRadius: {
-        panel: "1rem",
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+        display: ['"Bebas Neue"', "Impact", "sans-serif"],
       },
     },
   },
   plugins: [],
 };
-  
