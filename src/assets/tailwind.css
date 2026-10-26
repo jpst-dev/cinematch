@@ -27,14 +27,6 @@
   .pagina {
     @apply px-4 scroll-px-4 sm:px-8 sm:scroll-px-8 lg:px-12 lg:scroll-px-12;
   }
-  /* Em telas largas o conteúdo fica numa coluna central de 1600px; fundos e fileiras continuam de ponta a ponta. */
-  @media (min-width: 1704px) {
-    .pagina {
-      padding-left: calc((100% - 1600px) / 2);
-      padding-right: calc((100% - 1600px) / 2);
-      scroll-padding-inline: calc((100% - 1600px) / 2);
-    }
-  }
 
   .btn-primario {
     @apply inline-flex items-center gap-2 rounded-md bg-app-brand px-5 py-2.5 text-sm font-bold text-black transition hover:bg-app-brandHover;

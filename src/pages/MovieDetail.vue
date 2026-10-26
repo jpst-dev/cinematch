@@ -104,9 +104,15 @@
         </div>
       </section>
 
-      <section v-if="trailer" id="trailer" class="pagina mt-6 scroll-mt-20" aria-labelledby="titulo-trailer">
+      <!-- Em telas largas, a ficha técnica ocupa o espaço ao lado do trailer. -->
+      <div
+        v-if="trailer || ficha.length"
+        class="pagina mt-6 grid gap-8"
+        :class="trailer && 'xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_400px]'"
+      >
+      <section v-if="trailer" id="trailer" class="scroll-mt-20" aria-labelledby="titulo-trailer">
         <h2 id="titulo-trailer" class="mb-3 text-lg font-semibold text-white sm:text-xl">Trailer</h2>
-        <div class="aspect-video max-w-6xl overflow-hidden rounded-lg bg-app-surface ring-1 ring-white/10">
+        <div class="aspect-video overflow-hidden rounded-lg bg-app-surface ring-1 ring-white/10">
           <iframe
             :src="`https://www.youtube-nocookie.com/embed/${trailer}`"
             :title="`Trailer de ${filme.title}`"
@@ -117,6 +123,17 @@
           ></iframe>
         </div>
       </section>
+
+      <section v-if="ficha.length" aria-labelledby="titulo-ficha" :class="!trailer && 'max-w-xl'">
+        <h2 id="titulo-ficha" class="mb-3 text-lg font-semibold text-white sm:text-xl">Ficha técnica</h2>
+        <dl class="divide-y divide-app-border rounded-lg border border-app-border bg-app-surface/80 px-5 text-sm">
+          <div v-for="item in ficha" :key="item.rotulo" class="flex justify-between gap-6 py-3">
+            <dt class="shrink-0 text-app-muted">{{ item.rotulo }}</dt>
+            <dd class="text-right text-white">{{ item.valor }}</dd>
+          </div>
+        </dl>
+      </section>
+      </div>
 
       <section v-if="elenco.length" class="mt-12" aria-labelledby="titulo-elenco">
         <h2 id="titulo-elenco" class="pagina mb-3 text-lg font-semibold text-white sm:text-xl">Elenco principal</h2>
@@ -156,7 +173,7 @@ import MovieRow from "../components/MovieRow.vue";
 import { useMovieDetail } from "../composables/useMovieDetail";
 import { IMG, fundo } from "../services/tmdb";
 import { formatData, formatDuracao, formatNota } from "../utils/format";
-import { escolherTrailer, equipeChave, iniciais } from "../utils/detalhe";
+import { escolherTrailer, equipeChave, fichaTecnica, iniciais } from "../utils/detalhe";
 import type { Movie } from "../types/movie";
 
 const route = useRoute();
@@ -179,6 +196,7 @@ const equipe = computed(() => equipeChave(creditos.value.crew));
 const elenco = computed(() => creditos.value.cast.slice(0, 15));
 const provedores = computed<any[]>(() => onde.value?.flatrate ?? []);
 const linkProvedores = computed(() => onde.value?.link);
+const ficha = computed(() => (filme.value ? fichaTecnica(filme.value) : []));
 
 const titulo = useTitle();
 const tituloOriginal = titulo.value;
