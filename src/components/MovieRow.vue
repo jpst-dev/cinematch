@@ -21,7 +21,7 @@
       </button>
       <ul
         ref="trilho"
-        class="pagina scrollbar-none flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 sm:gap-4"
+        class="pagina scrollbar-none flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto scroll-smooth pb-2 sm:scroll-px-8 sm:gap-4 lg:scroll-px-12"
       >
         <template v-if="carregando && !filmes.length">
           <li v-for="n in 8" :key="n" class="item"><SkeletonPoster /></li>
@@ -64,7 +64,6 @@ const rolar = (direcao: 1 | -1) => {
 <style scoped>
 .item {
   @apply w-32 shrink-0 snap-start sm:w-40 lg:w-44;
-  scroll-margin-left: 1rem;
 }
 .seta {
   @apply absolute inset-y-0 z-10 hidden w-12 items-center justify-center from-app-bg/95 to-transparent pb-10 text-white opacity-0 transition hover:text-app-brand focus-visible:opacity-100 group-hover/row:opacity-100 md:flex;
