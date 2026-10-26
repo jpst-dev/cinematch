@@ -87,11 +87,10 @@ import PageContainer from "../components/ui/PageContainer.vue";
 import AppSpinner from "../components/ui/AppSpinner.vue";
 import { Carousel, Slide, Navigation } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
-import axios from "axios";
 import { getMovieGridClass } from "../utils/movieGrid";
 
 const store = useMovieStore();
-const { getPopularMovies, searchMovies } = useMovies();
+const { getPopularMovies, getNowPlayingMovies, searchMovies } = useMovies();
 const nowPlayingMovies = ref<any[]>([]);
 const isDragging = ref(false);
 
@@ -106,19 +105,6 @@ const responsiveItemsToShow = computed(() => {
   return 7;
 });
 
-const getNowPlayingMovies = async (page = 1) => {
-  const { data } = await axios.get(
-    "https://api.themoviedb.org/3/movie/now_playing",
-    {
-      params: {
-        api_key: import.meta.env.VITE_TMDB_API_KEY,
-        language: "pt-BR",
-        page,
-      },
-    }
-  );
-  return data.results;
-};
 
 const fetchNowPlaying = async () => {
   nowPlayingMovies.value = await getNowPlayingMovies(1);

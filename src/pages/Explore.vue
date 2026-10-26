@@ -8,7 +8,6 @@ import PageContainer from "../components/ui/PageContainer.vue";
 import AppInput from "../components/ui/AppInput.vue";
 import AppSelect from "../components/ui/AppSelect.vue";
 import AppSpinner from "../components/ui/AppSpinner.vue";
-import axios from "axios";
 import { getMovieGridClass } from "../utils/movieGrid";
 
 const sortOptions = [
@@ -22,7 +21,7 @@ const sortOptions = [
 const selectedSort = ref("vote_average.desc");
 
 const store = useMovieStore();
-const { searchMovies, getMoviesWithFilters } = useMovies();
+const { searchMovies, getMoviesWithFilters, getGenres } = useMovies();
 
 const search = ref("");
 const movies = ref<any[]>([]);
@@ -35,10 +34,8 @@ const genres = ref<any[]>([]);
 const selectedGenre = ref("");
 
 const fetchGenres = async () => {
-  const res = await axios.get("https://api.themoviedb.org/3/genre/movie/list", {
-    params: { api_key: import.meta.env.VITE_TMDB_API_KEY, language: "pt-BR" },
-  });
-  genres.value = res.data.genres;
+  const mapa = await getGenres();
+  genres.value = Object.entries(mapa).map(([id, name]) => ({ id: Number(id), name }));
 };
 
 const fetchInitial = async () => {

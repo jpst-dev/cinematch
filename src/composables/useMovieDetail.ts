@@ -1,51 +1,17 @@
-import axios from "axios";
-
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-const BASE_URL = "https://api.themoviedb.org/3";
+import { tmdb } from "../services/tmdb";
 
 export const useMovieDetail = () => {
-  const getMovieDetails = async (id: string) => {
-    const { data } = await axios.get(`${BASE_URL}/movie/${id}`, {
-      params: { api_key: API_KEY, language: "pt-BR" },
-    });
-    return data;
-  };
+  const getMovieDetails = (id: string) => tmdb<any>(`movie/${id}`);
 
-  const getCredits = async (id: string) => {
-    const { data } = await axios.get(`${BASE_URL}/movie/${id}/credits`, {
-      params: { api_key: API_KEY, language: "pt-BR" },
-    });
-    return data;
-  };
+  const getCredits = (id: string) => tmdb<any>(`movie/${id}/credits`);
 
-  const getVideos = async (id: string) => {
-    const { data } = await axios.get(`${BASE_URL}/movie/${id}/videos`, {
-      params: { api_key: API_KEY, language: "pt-BR" },
-    });
-    return data.results;
-  };
+  const getVideos = async (id: string) => (await tmdb<{ results: any[] }>(`movie/${id}/videos`)).results;
 
-  const getRecommendations = async (id: string) => {
-    const { data } = await axios.get(
-      `${BASE_URL}/movie/${id}/recommendations`,
-      {
-        params: { api_key: API_KEY, language: "pt-BR" },
-      }
-    );
-    return data.results;
-  };
+  const getRecommendations = async (id: string) =>
+    (await tmdb<{ results: any[] }>(`movie/${id}/recommendations`)).results;
 
-  const getWatchProviders = async (id: string) => {
-    const { data } = await axios.get(
-      `https://api.themoviedb.org/3/movie/${id}/watch/providers`,
-      {
-        params: {
-          api_key: import.meta.env.VITE_TMDB_API_KEY,
-        },
-      }
-    );
-    return data.results.BR; // ou "US", dependendo do país
-  };
+  const getWatchProviders = async (id: string) =>
+    (await tmdb<{ results: Record<string, any> }>(`movie/${id}/watch/providers`)).results.BR;
 
   return {
     getMovieDetails,
