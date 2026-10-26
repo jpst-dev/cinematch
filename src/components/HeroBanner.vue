@@ -21,7 +21,7 @@
       :aria-label="`${i + 1} de ${destaques.length}: ${filme.title}`"
     >
       <img
-        :src="IMG('w1280', filme.backdrop_path)!"
+        v-bind="fundo(filme.backdrop_path!)"
         alt=""
         class="absolute inset-0 h-full w-full object-cover object-[center_20%]"
         :loading="i === 0 ? 'eager' : 'lazy'"
@@ -80,7 +80,7 @@
 import { computed, ref } from "vue";
 import { useIntervalFn } from "@vueuse/core";
 import { Play, Info } from "lucide-vue-next";
-import { IMG } from "../services/tmdb";
+import { fundo } from "../services/tmdb";
 import { ano, formatNota } from "../utils/format";
 import { filmesDoHero } from "../utils/hero";
 import type { Movie } from "../types/movie";

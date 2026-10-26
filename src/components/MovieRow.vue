@@ -21,7 +21,7 @@
       </button>
       <ul
         ref="trilho"
-        class="pagina scrollbar-none flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto scroll-smooth pb-2 sm:scroll-px-8 sm:gap-4 lg:scroll-px-12"
+        class="pagina scrollbar-none flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 sm:gap-4"
       >
         <template v-if="carregando && !filmes.length">
           <li v-for="n in 8" :key="n" class="item"><SkeletonPoster /></li>

@@ -24,7 +24,7 @@
       <section class="relative flex min-h-[70vh] items-end overflow-hidden sm:min-h-[82vh]">
         <img
           v-if="backdrop"
-          :src="backdrop"
+          v-bind="backdrop"
           alt=""
           class="absolute inset-0 h-full w-full object-cover object-[center_20%]"
           fetchpriority="high"
@@ -41,7 +41,7 @@
             class="w-28 shrink-0 rounded-lg shadow-2xl shadow-black/60 ring-1 ring-white/10 md:block md:w-56 lg:w-64"
             :class="{ hidden: backdrop }"
           />
-          <div class="max-w-2xl">
+          <div class="max-w-3xl">
             <h1
               class="hyphens-auto break-words font-display uppercase leading-[0.9] tracking-wide text-white"
               :class="filme.title.length > 22 ? 'text-5xl sm:text-6xl lg:text-7xl' : 'text-6xl sm:text-7xl lg:text-8xl'"
@@ -106,7 +106,7 @@
 
       <section v-if="trailer" id="trailer" class="pagina mt-6 scroll-mt-20" aria-labelledby="titulo-trailer">
         <h2 id="titulo-trailer" class="mb-3 text-lg font-semibold text-white sm:text-xl">Trailer</h2>
-        <div class="aspect-video max-w-5xl overflow-hidden rounded-lg bg-app-surface ring-1 ring-white/10">
+        <div class="aspect-video max-w-6xl overflow-hidden rounded-lg bg-app-surface ring-1 ring-white/10">
           <iframe
             :src="`https://www.youtube-nocookie.com/embed/${trailer}`"
             :title="`Trailer de ${filme.title}`"
@@ -120,7 +120,7 @@
 
       <section v-if="elenco.length" class="mt-12" aria-labelledby="titulo-elenco">
         <h2 id="titulo-elenco" class="pagina mb-3 text-lg font-semibold text-white sm:text-xl">Elenco principal</h2>
-        <ul class="pagina scrollbar-none flex snap-x gap-4 overflow-x-auto scroll-px-4 pb-2 sm:scroll-px-8 lg:scroll-px-12">
+        <ul class="pagina scrollbar-none flex snap-x gap-4 overflow-x-auto pb-2">
           <li v-for="ator in elenco" :key="ator.credit_id" class="w-28 shrink-0 snap-start sm:w-32">
             <img
               v-if="ator.profile_path"
@@ -154,7 +154,7 @@ import { useTitle } from "@vueuse/core";
 import { Play } from "lucide-vue-next";
 import MovieRow from "../components/MovieRow.vue";
 import { useMovieDetail } from "../composables/useMovieDetail";
-import { IMG } from "../services/tmdb";
+import { IMG, fundo } from "../services/tmdb";
 import { formatData, formatDuracao, formatNota } from "../utils/format";
 import { escolherTrailer, equipeChave, iniciais } from "../utils/detalhe";
 import type { Movie } from "../types/movie";
@@ -171,7 +171,7 @@ const recomendados = ref<Movie[]>([]);
 const onde = ref<any>(null);
 
 const poster = computed(() => IMG("w500", filme.value?.poster_path));
-const backdrop = computed(() => IMG("w1280", filme.value?.backdrop_path));
+const backdrop = computed(() => (filme.value?.backdrop_path ? fundo(filme.value.backdrop_path) : null));
 const nota = computed(() => formatNota(filme.value?.vote_average));
 const dataLancamento = computed(() => formatData(filme.value?.release_date));
 const duracao = computed(() => formatDuracao(filme.value?.runtime));
