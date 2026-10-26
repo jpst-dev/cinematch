@@ -47,36 +47,4 @@
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
-
-  /* Legado: sai quando as páginas antigas forem reescritas. */
-  .app-panel {
-    @apply rounded-xl border border-app-border bg-app-surface;
-  }
-  .app-section-title {
-    @apply text-2xl font-bold tracking-tight text-app-text;
-  }
-  .app-page {
-    @apply px-4 pb-6 pt-24 sm:px-6 lg:px-8;
-  }
-  .app-page-inner {
-    @apply mx-auto w-full max-w-7xl;
-  }
-  .app-button-primary {
-    @apply btn-primario;
-  }
-  .app-button-ghost {
-    @apply inline-flex items-center justify-center rounded-md border border-app-border px-3 py-2 text-sm text-app-muted;
-  }
-  .movie-grid {
-    @apply grid gap-4 sm:gap-6;
-  }
-  .movie-grid-sm {
-    @apply grid-cols-[repeat(auto-fill,minmax(120px,1fr))];
-  }
-  .movie-grid-md {
-    @apply grid-cols-[repeat(auto-fill,minmax(160px,1fr))];
-  }
-  .movie-grid-lg {
-    @apply grid-cols-[repeat(auto-fill,minmax(220px,1fr))];
-  }
 }

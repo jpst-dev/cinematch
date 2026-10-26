@@ -5,7 +5,8 @@ export const useMovieDetail = () => {
 
   const getCredits = (id: string) => tmdb<any>(`movie/${id}/credits`);
 
-  const getVideos = async (id: string) => (await tmdb<{ results: any[] }>(`movie/${id}/videos`)).results;
+  const getVideos = async (id: string, language?: string) =>
+    (await tmdb<{ results: any[] }>(`movie/${id}/videos`, { language })).results;
 
   const getRecommendations = async (id: string) =>
     (await tmdb<{ results: any[] }>(`movie/${id}/recommendations`)).results;
