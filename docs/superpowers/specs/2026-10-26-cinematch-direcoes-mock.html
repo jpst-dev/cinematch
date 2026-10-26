@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>CineMatch — direções</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --img: https://image.tmdb.org/t/p; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0b0b0d; color: #e7e7ea; font-family: Inter, system-ui, sans-serif; padding: 32px 24px 80px; }
+  .intro { max-width: 1180px; margin: 0 auto 28px; }
+  .intro h1 { font-size: 22px; margin-bottom: 6px; }
+  .intro p { color: #9a9aa3; font-size: 14px; }
+  .opcao { max-width: 1180px; margin: 0 auto 56px; cursor: pointer; }
+  .opcao > header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+  .opcao > header b { font-size: 18px; }
+  .opcao > header span { color: #9a9aa3; font-size: 14px; }
+  .opcao.selected .frame { outline: 3px solid #42d392; outline-offset: 4px; }
+  .frame { border-radius: 14px; overflow: hidden; border: 1px solid #26262b; position: relative; }
+  .poster { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
+  .row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+
+  /* ---------- A: Sala escura ---------- */
+  .a { background: #070707; font-family: Inter; }
+  .a .hero { position: relative; height: 520px; }
+  .a .hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+  .a .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #070707 0%, rgba(7,7,7,.85) 30%, rgba(7,7,7,0) 65%), linear-gradient(0deg, #070707 0%, rgba(7,7,7,0) 35%); }
+  .a nav { position: absolute; z-index: 2; top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 28px; padding: 20px 44px; background: linear-gradient(180deg, rgba(0,0,0,.7), transparent); }
+  .a .logo { font-family: 'Bebas Neue'; font-size: 32px; letter-spacing: 1px; color: #fbbf24; }
+  .a nav a { color: #d4d4d8; font-size: 14px; text-decoration: none; }
+  .a nav a.on { color: #fff; font-weight: 600; }
+  .a nav .busca { margin-left: auto; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); display: grid; place-items: center; }
+  .a .info { position: absolute; z-index: 2; left: 44px; bottom: 70px; max-width: 460px; }
+  .a .selo { display: inline-flex; gap: 8px; align-items: center; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #fbbf24; margin-bottom: 10px; }
+  .a h2 { font-family: 'Bebas Neue'; font-size: 84px; line-height: .9; letter-spacing: 1px; color: #fff; }
+  .a .meta { display: flex; gap: 14px; margin: 14px 0; color: #d4d4d8; font-size: 14px; }
+  .a .meta b { color: #fbbf24; }
+  .a .sinopse { color: #b4b4bb; font-size: 14px; line-height: 1.55; }
+  .a .btns { display: flex; gap: 12px; margin-top: 20px; }
+  .a .btn { padding: 11px 22px; border-radius: 6px; font-weight: 700; font-size: 14px; }
+  .a .btn.p { background: #fbbf24; color: #111; }
+  .a .btn.s { background: rgba(255,255,255,.14); color: #fff; backdrop-filter: blur(6px); }
+  .a .secao { padding: 0 44px 34px; position: relative; z-index: 2; margin-top: -30px; }
+  .a .secao h3 { font-size: 18px; margin-bottom: 12px; color: #fff; }
+  .a .row img { border-radius: 6px; }
+  .a .row div:hover img { transform: scale(1.04); }
+
+  /* ---------- B: Streaming com barra lateral ---------- */
+  .b { background: radial-gradient(1200px 500px at 70% -10%, #2b1d5c 0%, #0d0b1a 55%), #0d0b1a; display: grid; grid-template-columns: 72px 1fr; font-family: Outfit; min-height: 640px; }
+  .b aside { border-right: 1px solid rgba(255,255,255,.06); display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 22px 0; background: rgba(13,11,26,.6); }
+  .b aside .logo { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #8b5cf6, #ec4899); display: grid; place-items: center; font-weight: 800; color: #fff; margin-bottom: 18px; }
+  .b aside i { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; color: #8f8aa8; font-style: normal; font-size: 18px; }
+  .b aside i.on { background: rgba(139,92,246,.18); color: #c4b5fd; }
+  .b main { padding: 22px 30px 30px; }
+  .b .top { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+  .b .busca { flex: 1; max-width: 420px; padding: 11px 16px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); color: #8f8aa8; font-size: 14px; }
+  .b .chips { display: flex; gap: 8px; margin-left: auto; }
+  .b .chip { padding: 7px 14px; border-radius: 999px; font-size: 13px; color: #c9c5dd; background: rgba(255,255,255,.05); }
+  .b .chip.on { background: #fff; color: #120f24; font-weight: 600; }
+  .b .hero { position: relative; border-radius: 22px; overflow: hidden; height: 330px; display: flex; align-items: flex-end; padding: 30px; gap: 26px; }
+  .b .hero > img.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .b .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,11,26,.95) 0%, rgba(13,11,26,.55) 50%, rgba(13,11,26,.1) 100%); }
+  .b .hero .p { position: relative; width: 150px; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,.6); }
+  .b .hero .txt { position: relative; max-width: 440px; }
+  .b .gen { display: flex; gap: 8px; margin-bottom: 10px; }
+  .b .gen span { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: rgba(139,92,246,.25); color: #ddd6fe; }
+  .b h2 { font-size: 44px; font-weight: 800; color: #fff; line-height: 1; }
+  .b .meta { color: #c9c5dd; font-size: 14px; margin: 10px 0 16px; }
+  .b .meta b { color: #facc15; }
+  .b .btn { display: inline-block; padding: 11px 22px; border-radius: 999px; background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; font-weight: 700; font-size: 14px; }
+  .b h3 { font-size: 18px; color: #fff; margin: 26px 0 12px; display: flex; justify-content: space-between; }
+  .b h3 small { font-size: 13px; color: #a78bfa; font-weight: 500; }
+  .b .card { position: relative; }
+  .b .card img { border-radius: 14px; }
+  .b .card .nota { position: absolute; top: 8px; left: 8px; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 8px; background: rgba(13,11,26,.75); backdrop-filter: blur(6px); color: #facc15; }
+  .b .card p { font-size: 13px; color: #e7e5f3; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ---------- C: Família DealsGamer ---------- */
+  .c { background: #070b14; font-family: Sora; }
+  .c .bar { display: flex; align-items: center; gap: 20px; padding: 14px 32px; border-bottom: 1px solid #141b2b; }
+  .c .logo { font-weight: 700; font-size: 20px; color: #fff; }
+  .c .logo span { color: #f43f5e; }
+  .c .busca { flex: 1; max-width: 560px; padding: 10px 14px; border-radius: 8px; background: #0e1424; border: 1px solid #1d2638; color: #6b7590; font-size: 13px; display: flex; justify-content: space-between; }
+  .c .busca kbd { border: 1px solid #2a3449; border-radius: 4px; padding: 0 6px; font-size: 11px; }
+  .c .bar .ent { margin-left: auto; border: 1px solid #2a3449; border-radius: 8px; padding: 7px 14px; font-size: 13px; color: #e2e8f0; }
+  .c .sub { display: flex; gap: 24px; padding: 12px 32px; font-size: 13px; color: #94a3b8; border-bottom: 1px solid #141b2b; }
+  .c .sub b { color: #fff; font-weight: 600; }
+  .c .hero { margin: 26px 32px; height: 360px; border-radius: 16px; overflow: hidden; position: relative; display: flex; align-items: center; padding: 0 56px; gap: 22px; }
+  .c .hero > img.bg { position: absolute; right: 0; top: 0; height: 100%; width: 70%; object-fit: cover; }
+  .c .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #120a14 30%, rgba(18,10,20,.6) 55%, rgba(18,10,20,0) 80%), linear-gradient(135deg, rgba(244,63,94,.18), transparent 60%); }
+  .c .hero .p { position: relative; width: 130px; border-radius: 10px; }
+  .c .hero .txt { position: relative; }
+  .c .badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 6px; background: #f43f5e; color: #fff; margin-bottom: 10px; }
+  .c h2 { font-size: 34px; color: #fff; }
+  .c .meta { display: flex; gap: 10px; align-items: center; margin: 10px 0 14px; font-size: 14px; color: #cbd5e1; }
+  .c .meta .n { font-size: 22px; font-weight: 700; color: #fbbf24; }
+  .c .btn { display: inline-block; padding: 9px 18px; border-radius: 8px; background: #f43f5e; color: #fff; font-weight: 600; font-size: 14px; }
+  .c .dots { position: absolute; bottom: 16px; left: 50%; display: flex; gap: 6px; }
+  .c .dots i { width: 7px; height: 7px; border-radius: 50%; background: #475569; }
+  .c .dots i:first-child { background: #f43f5e; width: 18px; border-radius: 4px; }
+  .c .secao { padding: 0 32px 30px; }
+  .c .secao h3 { display: flex; justify-content: space-between; font-size: 18px; color: #fff; margin-bottom: 12px; }
+  .c .secao h3 small { color: #f43f5e; font-size: 13px; }
+  .c .card { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid #1d2638; background: #0e1424; }
+  .c .card .tags { position: absolute; top: 8px; left: 8px; display: flex; gap: 5px; }
+  .c .card .tags span { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 5px; background: #111827cc; color: #e2e8f0; }
+  .c .card .tags span.n { background: #fbbf24; color: #111; }
+  .c .card .info { padding: 9px 10px; }
+  .c .card .info p { font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .c .card .info small { font-size: 12px; color: #94a3b8; }
+</style>
+</head>
+<body>
+<div class="intro">
+  <h1>CineMatch — três identidades</h1>
+  <p>Mesmos filmes de hoje, só muda a cara. Clique para marcar a que mais gosta e me conte no terminal (pode misturar: "a B com o hero da A").</p>
+</div>
+
+<!-- A -->
+<section class="opcao" data-choice="a" onclick="toggleSelect(this)">
+  <header><b>A · Sala escura</b><span>estilo Netflix: imagem do filme ocupando a tela, título grande de cartaz, preto e âmbar (luz de cinema)</span></header>
+  <div class="frame a">
+    <div class="hero">
+      <img src="https://image.tmdb.org/t/p/w1280/uL4cIrNi2uaUnWIOQQ28EVnkETG.jpg" alt="">
+      <nav><span class="logo">CINEMATCH</span><a class="on">Início</a><a>Em alta</a><a>Mais bem avaliados</a><a>Explorar</a><span class="busca">⌕</span></nav>
+      <div class="info">
+        <div class="selo">● Em cartaz</div>
+        <h2>CARA-DE-BARRO</h2>
+        <div class="meta"><b>★ 7,6</b><span>2026</span><span>Terror · Ação</span></div>
+        <p class="sinopse">Um vilão moldado em argila ganha vida nas sombras de Gotham, enquanto a cidade tenta entender quem — ou o quê — está por trás dos ataques.</p>
+        <div class="btns"><span class="btn p">▶ Ver trailer</span><span class="btn s">Detalhes</span></div>
+      </div>
+    </div>
+    <div class="secao">
+      <h3>Em alta esta semana</h3>
+      <div class="row">
+        <div><img class="poster" src="https://image.tmdb.org/t/p/w342/xtxEvJACNnbz3WYmJ5mYT1a0KGk.jpg" alt=""></div>
+        <div><img class="poster" src="https://image.tmdb.org/t/p/w342/hgPJA0NTmXYpPA3cgh4ZrI1PubL.jpg" alt=""></div>
+        <div><img class="poster" src="https://image.tmdb.org/t/p/w342/gQ76UL64RQe3oHwiwHwODTC23g4.jpg" alt=""></div>
+        <div><img class="poster" src="https://image.tmdb.org/t/p/w342/vzb3bKOFtciIVSEIsLOZH4uJfxN.jpg" alt=""></div>
+        <div><img class="poster" src="https://image.tmdb.org/t/p/w342/Ap8QwmKfSjYbWC4XIP8w9pdn72O.jpg" alt=""></div>
+        <div><img class="poster" src="https://image.tmdb.org/t/p/w342/2qelG58fO3tOSPrDVzOW8hfxY3V.jpg" alt=""></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- B -->
+<section class="opcao" data-choice="b" onclick="toggleSelect(this)">
+  <header><b>B · Streaming com barra lateral</b><span>estilo Stremio: menu de ícones à esquerda, vidro e degradê roxo→rosa, cantos bem arredondados</span></header>
+  <div class="frame b">
+    <aside><span class="logo">C</span><i class="on">⌂</i><i>🔥</i><i>★</i><i>◎</i><i>♡</i></aside>
+    <main>
+      <div class="top"><span class="busca">⌕ Buscar filme, ator ou palavra-chave</span><div class="chips"><span class="chip on">Todos</span><span class="chip">Ação</span><span class="chip">Terror</span><span class="chip">Drama</span><span class="chip">Comédia</span></div></div>
+      <div class="hero">
+        <img class="bg" src="https://image.tmdb.org/t/p/w1280/uL4cIrNi2uaUnWIOQQ28EVnkETG.jpg" alt="">
+        <img class="p" src="https://image.tmdb.org/t/p/w342/dqvHs2YXks989ScXvsngbqAeBHX.jpg" alt="">
+        <div class="txt">
+          <div class="gen"><span>Terror</span><span>Ação</span></div>
+          <h2>Cara-de-Barro</h2>
+          <div class="meta"><b>★ 7,6</b> · 2026 · 1h 52min</div>
+          <span class="btn">▶ Assistir trailer</span>
+        </div>
+      </div>
+      <h3>Em alta <small>Ver tudo →</small></h3>
+      <div class="row">
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/xtxEvJACNnbz3WYmJ5mYT1a0KGk.jpg" alt=""><span class="nota">★ 7,3</span><p>A Queda 2: No Limite</p></div>
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/hgPJA0NTmXYpPA3cgh4ZrI1PubL.jpg" alt=""><span class="nota">★ 7,7</span><p>Matchbox - O Filme</p></div>
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/gQ76UL64RQe3oHwiwHwODTC23g4.jpg" alt=""><span class="nota">★ 7,3</span><p>Resident Evil</p></div>
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/vzb3bKOFtciIVSEIsLOZH4uJfxN.jpg" alt=""><span class="nota">★ 8,3</span><p>Três Horas Para Viver</p></div>
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/Ap8QwmKfSjYbWC4XIP8w9pdn72O.jpg" alt=""><span class="nota">★ 9,1</span><p>Tudo Pode Ser Visto</p></div>
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/2qelG58fO3tOSPrDVzOW8hfxY3V.jpg" alt=""><span class="nota">★ 7,5</span><p>Digger</p></div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- C -->
+<section class="opcao" data-choice="c" onclick="toggleSelect(this)">
+  <header><b>C · Família DealsGamer</b><span>mesma estrutura do DealsGamer (busca no topo, submenu, banner em carrossel, cards com selos), com cor própria: vermelho-rosado</span></header>
+  <div class="frame c">
+    <div class="bar"><span class="logo">Cine<span>Match</span></span><span class="busca">⌕ Buscar filmes, atores e diretores <kbd>/</kbd></span><span class="ent">♡ Minha lista</span></div>
+    <div class="sub"><b>Início</b><span>Em cartaz</span><span>Em alta</span><span>Mais bem avaliados</span><span>Gêneros ⌄</span></div>
+    <div class="hero">
+      <img class="bg" src="https://image.tmdb.org/t/p/w1280/uL4cIrNi2uaUnWIOQQ28EVnkETG.jpg" alt="">
+      <img class="p" src="https://image.tmdb.org/t/p/w342/dqvHs2YXks989ScXvsngbqAeBHX.jpg" alt="">
+      <div class="txt">
+        <span class="badge">Estreia da semana</span>
+        <h2>Cara-de-Barro</h2>
+        <div class="meta"><span class="n">★ 7,6</span><span>19 out. 2026 · Terror, Ação</span></div>
+        <span class="btn">Ver detalhes</span>
+      </div>
+      <div class="dots"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div class="secao">
+      <h3>Em alta <small>Ver tudo →</small></h3>
+      <div class="row">
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/xtxEvJACNnbz3WYmJ5mYT1a0KGk.jpg" alt=""><div class="tags"><span class="n">★ 7,3</span><span>Ação</span></div><div class="info"><p>A Queda 2: No Limite</p><small>1 set. 2026</small></div></div>
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/hgPJA0NTmXYpPA3cgh4ZrI1PubL.jpg" alt=""><div class="tags"><span class="n">★ 7,7</span><span>Aventura</span></div><div class="info"><p>Matchbox - O Filme</p><small>5 out. 2026</small></div></div>
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/gQ76UL64RQe3oHwiwHwODTC23g4.jpg" alt=""><div class="tags"><span class="n">★ 7,3</span><span>Terror</span></div><div class="info"><p>Resident Evil</p><small>16 set. 2026</small></div></div>
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/vzb3bKOFtciIVSEIsLOZH4uJfxN.jpg" alt=""><div class="tags"><span class="n">★ 8,3</span><span>Suspense</span></div><div class="info"><p>Três Horas Para Viver</p><small>7 set. 2026</small></div></div>
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/Ap8QwmKfSjYbWC4XIP8w9pdn72O.jpg" alt=""><div class="tags"><span class="n">★ 9,1</span><span>Drama</span></div><div class="info"><p>Tudo Pode Ser Visto</p><small>16 out. 2026</small></div></div>
+        <div class="card"><img class="poster" src="https://image.tmdb.org/t/p/w342/2qelG58fO3tOSPrDVzOW8hfxY3V.jpg" alt=""><div class="tags"><span class="n">★ 7,5</span><span>Comédia</span></div><div class="info"><p>Digger</p><small>28 set. 2026</small></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>
